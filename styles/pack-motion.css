@@ -1,0 +1,116 @@
+.pack-float,
+.pack-tilt {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.pack-float {
+  transform-origin: 50% 64%;
+  animation: pack-idle-drift 4.8s ease-in-out infinite;
+}
+
+.pack-tilt {
+  --pack-glare-x: 50%;
+  --pack-glare-y: 35%;
+  transform: perspective(860px) rotateX(var(--pack-hover-x, 0deg)) rotateY(var(--pack-hover-y, 0deg));
+  transform-origin: 50% 50%;
+}
+
+/* Idle foil sheen across sealed pack */
+.pack-tilt::after {
+  position: absolute;
+  z-index: 4;
+  top: 2%;
+  right: 3%;
+  bottom: 3%;
+  left: 3%;
+  border-radius: 12px;
+  background: linear-gradient(114deg,
+    transparent 34%,
+    rgba(255, 244, 214, .09) 41%,
+    rgba(255, 251, 238, .36) 47%,
+    rgba(255, 248, 232, .12) 51%,
+    transparent 54%,
+    rgba(255, 252, 242, .22) 56%,
+    transparent 61%);
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  content: "";
+}
+
+/* Pointer-following dynamic foil glare when hovering */
+.pack-tilt::before {
+  position: absolute;
+  z-index: 4;
+  top: 2%;
+  right: 3%;
+  bottom: 3%;
+  left: 3%;
+  border-radius: 12px;
+  background: radial-gradient(ellipse 74% 58% at var(--pack-glare-x) var(--pack-glare-y),
+    rgba(255, 250, 234, .34) 0%,
+    rgba(255, 238, 200, .10) 42%,
+    transparent 74%);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  content: "";
+}
+
+.pack.is-hovering .pack-tilt::before {
+  opacity: 1;
+}
+
+.stage[data-phase="sealed"] .pack-tilt::after {
+  animation: pack-idle-sheen 5.6s linear infinite;
+}
+
+.stage.reveal-offscreen .pack-float,
+.stage.reveal-offscreen .pack-tilt::after,
+.pack.is-hovering .pack-float,
+.pack.is-grabbed .pack-float,
+.pack.is-tearing .pack-float,
+.pack.is-released .pack-float {
+  animation-play-state: paused;
+}
+
+.stage.reveal-offscreen .pack-tilt::after,
+.pack.is-hovering .pack-tilt::after,
+.pack.is-grabbed .pack-tilt::after,
+.pack.is-tearing .pack-tilt::after,
+.pack.is-released .pack-tilt::after {
+  visibility: hidden;
+  animation-play-state: paused;
+}
+
+.pack.is-grabbed .pack-tilt,
+.pack.is-tearing .pack-tilt,
+.pack.is-released .pack-tilt {
+  transform: perspective(860px) rotateX(0deg) rotateY(0deg);
+  transition: transform 125ms cubic-bezier(.19, .62, .31, 1);
+}
+
+@keyframes pack-idle-drift {
+  0%, 100% { transform: translateY(3px) rotate(-1.45deg); }
+  50% { transform: translateY(-7px) rotate(1.45deg); }
+}
+
+@keyframes pack-idle-sheen {
+  0%, 54% { background-position: 100% 50%; opacity: 0; }
+  60% { opacity: .82; }
+  78% { opacity: .68; }
+  85%, 100% { background-position: 0 50%; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pack-float,
+  .stage[data-phase="sealed"] .pack-tilt::after { animation: none; }
+  .pack-tilt,
+  .pack.is-grabbed .pack-tilt,
+  .pack.is-tearing .pack-tilt,
+  .pack.is-released .pack-tilt { transform: none; transition: none; }
+}

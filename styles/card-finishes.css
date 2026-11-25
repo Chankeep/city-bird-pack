@@ -1,0 +1,506 @@
+.android-card-rendering .bird-card {
+  /* Apply the Android alpha rendering path even when a card moves to the inspector. */
+  --card-blend-screen: normal;
+  --card-blend-soft-light: normal;
+  --card-blend-color-dodge: normal;
+  --card-blend-multiply: normal;
+}
+
+.bird-card { --card-aura: rgba(232, 224, 204, .10); }
+.bird-card[data-rank="rare"] { --card-aura: rgba(196, 138, 252, .34); }
+.bird-card[data-rank="holo"] { --card-aura: rgba(112, 232, 236, .44); }
+.bird-card[data-rank="ultra"] { --card-aura: rgba(255, 206, 102, .56); }
+.bird-card[data-rank="secret"] { --card-aura: rgba(142, 168, 255, .68); }
+
+.bird-card .bird-surface {
+  --sx: 53%;
+  --sy: 53%;
+  --window-x: 53%;
+  --window-y: 53%;
+  --reflect-distance: 48%;
+  --window-distance: 48%;
+  --rest-flash: .30;
+  --flash: var(--rest-flash);
+  --rim: #8f8a7c;
+  --ink: #2a2b26;
+  --sub-ink: #57584e;
+  --caption-rule: rgba(48, 46, 38, .14);
+  --rank-pill-bg: rgba(48, 46, 38, .07);
+  --rank-pill-border: rgba(48, 46, 38, .15);
+  --body: linear-gradient(156deg, #f4f2ea 0%, #e5e2d6 50%, #d5d1c3 100%);
+  --hot: rgba(255, 255, 255, .74);
+  --glint: .68;
+  --foil-strength: 0;
+  --sky: transparent;
+  --scene-filter: none;
+  --foil-grain: url("../assets/textures/foil-grain.png");
+  border: 0;
+  background: var(--body);
+  box-shadow:
+    var(--shadow-x, 0px) var(--shadow-y, 14px) 26px -14px rgba(2, 8, 9, .86),
+    0 0 0 1px rgba(255, 255, 255, .14),
+    1px 2px 0 var(--rim),
+    0 0 22px -6px var(--card-aura);
+  color: var(--ink);
+}
+
+.bird-card :is(.metal, .foil, .clearcoat, .bevel) {
+  display: block;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* The CSS face uses the same pointer position as the WebGL face. */
+.bird-card .metal {
+  opacity: var(--glint);
+  background: radial-gradient(ellipse 82% 66% at var(--sx) var(--sy),
+    var(--hot),
+    rgba(236, 243, 255, .25) 31%,
+    rgba(231, 239, 255, .08) 57%,
+    transparent 83%);
+}
+
+.bird-card .bevel {
+  z-index: 4;
+  margin: 2px;
+  border-radius: 16px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .68),
+    inset 0 -1px 0 rgba(32, 40, 45, .38),
+    0 0 0 1px rgba(255, 255, 255, .14);
+}
+.bird-card .bird-art {
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding-top: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 11px;
+  background: #3d2a33;
+  box-shadow:
+    0 0 0 1px rgba(20, 26, 30, .44),
+    0 1px 0 1px rgba(255, 255, 255, .36),
+    inset 0 0 0 1px rgba(255, 255, 255, .14);
+}
+.bird-card .scene, .bird-card .subject, .bird-card .window-foil, .bird-card .bird-art::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.bird-card .scene {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: var(--scene-filter);
+}
+.bird-card .bird-art::before {
+  z-index: 1;
+  content: "";
+  background: var(--sky);
+}
+.bird-card .subject {
+  z-index: 2;
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+.bird-card .window-foil {
+  z-index: 3;
+  opacity: calc(.10 + var(--flash) * .32);
+  background:
+    linear-gradient(112deg, transparent calc(var(--window-distance) - 34px),
+      rgba(209,231,214,0.23) calc(var(--window-distance) - 16px), rgba(255,249,223,0.56) var(--window-distance),
+      transparent calc(var(--window-distance) + 18px)),
+    radial-gradient(ellipse at var(--window-x) var(--window-y), rgba(255,255,255,0.17), transparent 41%);
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+/* Common cards: pure matte sculpted clay relief without metallic/gloss foil */
+.bird-card[data-rank="common"] .subject,
+.bird-card[data-rank="common"] .foil,
+.bird-card[data-rank="common"] .clearcoat { display: none; }
+
+.bird-card[data-rank="common"] .metal {
+  opacity: .55;
+  background: radial-gradient(ellipse 88% 76% at var(--sx) var(--sy),
+    rgba(255, 252, 244, .42) 0%,
+    rgba(255, 250, 238, .12) 48%,
+    rgba(38, 34, 26, .08) 100%);
+}
+
+.bird-card[data-rank="common"] .bevel {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .78),
+    inset 0 -1px 0 rgba(62, 56, 44, .22),
+    0 0 0 1px rgba(255, 255, 255, .18);
+}
+
+.bird-card[data-rank="common"] .bird-art {
+  box-shadow:
+    inset 0 2px 6px rgba(34, 28, 20, .26),
+    inset 0 -1px 0 rgba(255, 252, 245, .55),
+    0 0 0 1px rgba(56, 50, 40, .24),
+    0 1px 0 1px rgba(255, 255, 255, .52);
+}
+
+.bird-card[data-rank="common"] .scene {
+  filter: contrast(1.04) brightness(1.01);
+}
+
+.bird-card[data-rank="common"] .window-foil {
+  opacity: calc(.22 + var(--flash) * .28);
+  background:
+    radial-gradient(ellipse 82% 78% at var(--window-x) var(--window-y),
+      rgba(255, 252, 242, .22) 0%,
+      transparent 56%,
+      rgba(36, 28, 20, .14) 100%);
+  mix-blend-mode: var(--card-blend-soft-light, soft-light);
+}
+.bird-card .foil {
+  z-index: 2;
+  opacity: calc(var(--foil-strength) * (.72 + var(--flash) * .35));
+  background-image:
+    var(--rank-foil, linear-gradient(transparent, transparent)),
+    var(--foil-grain, none);
+  background-blend-mode: normal, luminosity;
+  background-color: rgba(29, 33, 49, var(--grain-strength, .13));
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+
+.bird-card .clearcoat {
+  z-index: 3;
+  opacity: calc(.24 + var(--flash) * .40);
+  /* A broad lobe and a narrow stripe track the projected highlight position. */
+  background:
+    radial-gradient(ellipse 44% 32% at var(--sx) var(--sy),
+      rgba(255, 255, 255, .22), transparent),
+    linear-gradient(112deg,
+      transparent calc(var(--reflect-distance) - 41px),
+      rgba(245, 251, 255, .14) calc(var(--reflect-distance) - 22px),
+      rgba(255, 255, 255, .66) calc(var(--reflect-distance) - 7px),
+      rgba(251, 253, 255, .24) calc(var(--reflect-distance) + 4px),
+      transparent calc(var(--reflect-distance) + 24px));
+}
+.bird-card .bird-name, .bird-card .bird-meta {
+  position: relative;
+  z-index: 5;
+  text-shadow: var(--type-shadow, 0 1px 1px rgba(255,255,255,.78));
+}
+.bird-card .bird-meta { color: var(--sub-ink); }
+
+.bird-card[data-rank="rare"] .bird-surface,
+.bird-card[data-rank="holo"] .bird-surface,
+.bird-card[data-rank="secret"] .bird-surface {
+  --ink: #fffdf4;
+  --sub-ink: #efeafc;
+  --caption-rule: rgba(255, 250, 255, .18);
+  --rank-pill-bg: rgba(255, 255, 255, .14);
+  --rank-pill-border: rgba(255, 255, 255, .24);
+  --type-shadow: 0 1px 3px rgba(14, 10, 34, .76);
+  --glint: .60;
+}
+
+.bird-card[data-rank="rare"] .bird-surface {
+  --rim: #3a2954;
+  --body: linear-gradient(140deg, #b09bd3 0%, #4b366c 18%, #594782 37%, #2a214c 63%, #4c3464 83%, #39254c 100%);
+  --scene-filter: saturate(.92) brightness(.90);
+  --sky:
+    radial-gradient(ellipse at 42% 34%, rgba(206, 178, 252, .22), transparent 64%),
+    linear-gradient(150deg, rgba(68, 46, 108, .18), rgba(46, 26, 78, .16));
+  --foil-strength: .34;
+  --rank-foil:
+    linear-gradient(112deg, transparent calc(var(--reflect-distance) - 73px), rgba(103,92,224,0.43) calc(var(--reflect-distance) - 46px),
+      rgba(202,138,224,0.58) calc(var(--reflect-distance) - 13px), rgba(95,196,190,0.34) calc(var(--reflect-distance) + 12px),
+      transparent calc(var(--reflect-distance) + 80px));
+}
+.bird-card[data-rank="rare"] .window-foil {
+  opacity: calc(.15 + var(--flash) * .20);
+  background-image:
+    repeating-linear-gradient(115deg,
+      rgba(174, 138, 248, .22) 0%,
+      rgba(224, 186, 255, .28) 14%,
+      rgba(148, 224, 236, .24) 28%,
+      rgba(174, 138, 248, .22) 42%);
+  background-size: 260% 260%;
+  background-position: calc(var(--light-x) * 1.25) calc(var(--light-y) * 1.25);
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+
+.bird-card[data-rank="holo"] .bird-surface {
+  --rim: #2e567a;
+  --rank-pill-bg: rgba(132, 244, 240, .18);
+  --rank-pill-border: rgba(168, 250, 248, .36);
+  --body: linear-gradient(140deg, #aae3e4, #3d7b9c 18%, #3e5294 42%, #202e60 59%, #5c65a4 79%, #3a3a6a);
+  --scene-filter: grayscale(.28) brightness(.72);
+  --sky:
+    radial-gradient(ellipse at 71% 19%, rgba(92, 208, 226, .40), transparent 63%),
+    linear-gradient(145deg, rgba(70,83,139,0.42), rgba(40,51,97,0.29) 56%, rgba(18,30,95,0.64));
+  --foil-strength: .56;
+  --grain-strength: .40;
+  --rank-foil:
+    linear-gradient(112deg,
+      transparent calc(var(--reflect-distance) - 14px),
+      rgba(90, 221, 255, .48) calc(var(--reflect-distance) - 8px),
+      rgba(156, 248, 232, .64) calc(var(--reflect-distance) - 5px),
+      rgba(255, 242, 190, .46) calc(var(--reflect-distance) - 1px),
+      rgba(255, 170, 232, .44) calc(var(--reflect-distance) + 4px),
+      transparent calc(var(--reflect-distance) + 13px)),
+    linear-gradient(112deg,
+      transparent calc(var(--reflect-distance) - 112px), rgba(0, 115, 194, .24) calc(var(--reflect-distance) - 65px),
+      rgba(44, 188, 236, .42) calc(var(--reflect-distance) - 37px), rgba(163, 236, 208, .35) calc(var(--reflect-distance) - 8px),
+      rgba(186, 154, 244, .42) calc(var(--reflect-distance) + 15px), rgba(250, 140, 198, .31) calc(var(--reflect-distance) + 34px),
+      transparent calc(var(--reflect-distance) + 85px));
+}
+
+.bird-card[data-rank="holo"] .window-foil {
+  opacity: calc(.16 + var(--flash) * .20);
+  background-image:
+    repeating-linear-gradient(115deg,
+      rgba(255, 118, 184, .28) 0%,
+      rgba(255, 224, 128, .30) 9%,
+      rgba(116, 248, 212, .34) 18%,
+      rgba(92, 204, 252, .32) 27%,
+      rgba(176, 134, 255, .30) 36%,
+      rgba(255, 118, 184, .28) 45%);
+  background-size: 260% 260%;
+  background-position: calc(var(--light-x) * 1.45) calc(var(--light-y) * 1.45);
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+
+.bird-card[data-rank="rare"] .clearcoat { opacity: calc(.18 + var(--flash) * .24); }
+.bird-card[data-rank="holo"] .clearcoat { opacity: calc(.20 + var(--flash) * .28); }
+
+.bird-card[data-rank="holo"] .subject {
+  filter: contrast(1.06) drop-shadow(1px 2px 3px rgba(18, 26, 44, .52));
+}
+
+.bird-card[data-rank="ultra"] .bird-surface {
+  --rim: #9b6127;
+  --ink: #342107;
+  --sub-ink: #3b2809;
+  --caption-rule: rgba(74, 46, 10, .20);
+  --rank-pill-bg: rgba(74, 46, 10, .14);
+  --rank-pill-border: rgba(112, 68, 16, .26);
+  --body: #b78953;
+  --hot: #fff4c6;
+  --glint: .76;
+  --scene-filter: sepia(.66) saturate(.86) brightness(.60);
+  --sky: radial-gradient(ellipse at 70% 24%, rgba(239, 178, 94, .32), rgba(119, 64, 39, .22) 54%, rgba(43, 22, 17, .56) 100%);
+  --foil-strength: .29;
+  --grain-strength: .20;
+  --rank-foil: radial-gradient(ellipse at var(--sx) var(--sy), rgba(255, 231, 161, .38), transparent 50%);
+}
+.bird-card[data-rank="ultra"] .metal {
+  overflow: hidden;
+  background: none;
+  opacity: 1;
+}
+
+.bird-card[data-rank="ultra"] .metal-reflection {
+  --metal-focus: var(--epic-metal-focus, 50%);
+  position: absolute;
+  top: -24%;
+  right: -24%;
+  bottom: -24%;
+  left: -24%;
+  background: linear-gradient(var(--epic-metal-angle, 126deg),
+    #8d6034 0%,
+    #ad7946 calc(var(--metal-focus) - 32%),
+    #c99759 calc(var(--metal-focus) - 19%),
+    #e7c490 calc(var(--metal-focus) - 8%),
+    #fff0ca var(--metal-focus),
+    #edd29a calc(var(--metal-focus) + 8%),
+    #c59257 calc(var(--metal-focus) + 17%),
+    #89592f calc(var(--metal-focus) + 29%),
+    #b18450 100%);
+}
+
+.bird-card[data-rank="ultra"] .bevel {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 210, .92),
+    inset 0 -1px 0 rgba(130, 78, 18, .55),
+    0 0 0 1px rgba(255, 232, 164, .44);
+}
+
+.bird-card[data-rank="ultra"] .window-foil {
+  z-index: 1;
+  opacity: calc(.06 + var(--flash) * .14);
+}
+
+.bird-card[data-rank="ultra"] .foil,
+.bird-card[data-rank="ultra"] .bird-ambient { z-index: 0; }
+
+.bird-card[data-rank="ultra"] .clearcoat {
+  --epic-light-travel: calc(var(--reflect-distance) - 50%);
+  opacity: calc(.34 + var(--flash) * .15);
+  background: none;
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+
+.bird-card[data-rank="ultra"] .clearcoat::before,
+.bird-card[data-rank="ultra"] .clearcoat::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+  content: "";
+  /* Gaussian opacity sampled in multiples of sigma, with a transparent cutoff at ±4σ. */
+  background: linear-gradient(112deg,
+      rgba(var(--epic-light-rgb), 0) calc(var(--epic-light-center) - var(--epic-light-sigma) * 4),
+      rgba(var(--epic-light-rgb), .0022) calc(var(--epic-light-center) - var(--epic-light-sigma) * 3.5),
+      rgba(var(--epic-light-rgb), .0111) calc(var(--epic-light-center) - var(--epic-light-sigma) * 3),
+      rgba(var(--epic-light-rgb), .0439) calc(var(--epic-light-center) - var(--epic-light-sigma) * 2.5),
+      rgba(var(--epic-light-rgb), .1353) calc(var(--epic-light-center) - var(--epic-light-sigma) * 2),
+      rgba(var(--epic-light-rgb), .2163) calc(var(--epic-light-center) - var(--epic-light-sigma) * 1.75),
+      rgba(var(--epic-light-rgb), .3247) calc(var(--epic-light-center) - var(--epic-light-sigma) * 1.5),
+      rgba(var(--epic-light-rgb), .4578) calc(var(--epic-light-center) - var(--epic-light-sigma) * 1.25),
+      rgba(var(--epic-light-rgb), .6065) calc(var(--epic-light-center) - var(--epic-light-sigma) * 1),
+      rgba(var(--epic-light-rgb), .7548) calc(var(--epic-light-center) - var(--epic-light-sigma) * 0.75),
+      rgba(var(--epic-light-rgb), .8825) calc(var(--epic-light-center) - var(--epic-light-sigma) * 0.5),
+      rgba(var(--epic-light-rgb), .9692) calc(var(--epic-light-center) - var(--epic-light-sigma) * 0.25),
+      rgba(var(--epic-light-rgb), 1) var(--epic-light-center),
+      rgba(var(--epic-light-rgb), .9692) calc(var(--epic-light-center) + var(--epic-light-sigma) * 0.25),
+      rgba(var(--epic-light-rgb), .8825) calc(var(--epic-light-center) + var(--epic-light-sigma) * 0.5),
+      rgba(var(--epic-light-rgb), .7548) calc(var(--epic-light-center) + var(--epic-light-sigma) * 0.75),
+      rgba(var(--epic-light-rgb), .6065) calc(var(--epic-light-center) + var(--epic-light-sigma) * 1),
+      rgba(var(--epic-light-rgb), .4578) calc(var(--epic-light-center) + var(--epic-light-sigma) * 1.25),
+      rgba(var(--epic-light-rgb), .3247) calc(var(--epic-light-center) + var(--epic-light-sigma) * 1.5),
+      rgba(var(--epic-light-rgb), .2163) calc(var(--epic-light-center) + var(--epic-light-sigma) * 1.75),
+      rgba(var(--epic-light-rgb), .1353) calc(var(--epic-light-center) + var(--epic-light-sigma) * 2),
+      rgba(var(--epic-light-rgb), .0439) calc(var(--epic-light-center) + var(--epic-light-sigma) * 2.5),
+      rgba(var(--epic-light-rgb), .0111) calc(var(--epic-light-center) + var(--epic-light-sigma) * 3),
+      rgba(var(--epic-light-rgb), .0022) calc(var(--epic-light-center) + var(--epic-light-sigma) * 3.5),
+      rgba(var(--epic-light-rgb), 0) calc(var(--epic-light-center) + var(--epic-light-sigma) * 4));
+}
+
+.bird-card[data-rank="ultra"] .clearcoat::before {
+  --epic-light-center: calc(33% + var(--epic-light-travel) * .42);
+  --epic-light-sigma: 21px;
+  --epic-light-rgb: 255, 249, 230;
+  opacity: .76;
+}
+
+.bird-card[data-rank="ultra"] .clearcoat::after {
+  --epic-light-center: calc(67% + var(--epic-light-travel) * .22);
+  --epic-light-sigma: 24px;
+  --epic-light-rgb: 255, 222, 171;
+  --epic-light-falloff: linear-gradient(146deg,
+    rgba(0, 0, 0, .76), rgba(0, 0, 0, .83) 34%, rgba(0, 0, 0, .96) 74%, #000);
+  -webkit-mask-image: var(--epic-light-falloff);
+  mask-image: var(--epic-light-falloff);
+  opacity: var(--epic-right-light, .44);
+}
+
+.bird-card[data-rank="secret"] .bird-surface {
+  --rim: #6d78cc;
+  --rank-pill-bg: linear-gradient(135deg, rgba(110, 224, 244, .26), rgba(168, 128, 252, .30) 52%, rgba(248, 152, 214, .26));
+  --rank-pill-border: rgba(196, 222, 255, .58);
+  --body: linear-gradient(135deg,
+    #2b3778 0%,
+    #111534 26%,
+    #341d5e 52%,
+    #122344 76%,
+    #523a7e 100%);
+  --hot: rgba(226, 242, 255, .90);
+  --glint: .82;
+  --scene-filter: saturate(.78) contrast(1.06) brightness(.52);
+  --sky: linear-gradient(155deg, rgba(10, 14, 44, .68), rgba(24, 14, 54, .56) 52%, rgba(10, 24, 48, .70));
+  --foil-strength: .56;
+  --grain-strength: .34;
+  --rank-foil:
+    repeating-linear-gradient(115deg,
+      rgba(94, 224, 248, .34) 0%,
+      rgba(148, 134, 255, .36) 18%,
+      rgba(244, 136, 214, .32) 36%,
+      rgba(122, 246, 220, .34) 54%,
+      rgba(94, 224, 248, .34) 72%);
+}
+.bird-card[data-rank="secret"] .bevel {
+  box-shadow:
+    inset 0 1px 0 rgba(196, 246, 255, .88),
+    inset 0 -1px 0 rgba(198, 142, 255, .64),
+    0 0 0 1px rgba(162, 206, 255, .50),
+    0 0 12px -2px rgba(136, 178, 255, .38);
+}
+.bird-card[data-rank="secret"] .clearcoat {
+  /* Different texture widths give the two sweeps different travel distances. */
+  --sweep-phase: calc((var(--light-x, 55%) - 50%) * .26 + (var(--light-y, 56%) - 50%) * .08);
+  opacity: calc(.28 + var(--flash) * .26);
+  /* Expand both edges by 1.5px and keep the repeat period anchored to the first stop. */
+  background-image:
+    repeating-linear-gradient(133deg,
+      transparent -1.5px,
+      rgba(102, 222, 255, .07) calc(.85% - 1.5px),
+      rgba(139, 232, 255, .38) calc(1.98% - 1.5px),
+      rgba(187, 245, 255, .66) calc(2.57% - .7px),
+      rgba(208, 250, 255, .76) 3%,
+      rgba(195, 220, 255, .66) calc(3.44% + .7px),
+      rgba(181, 146, 255, .38) calc(3.99% + 1.5px),
+      rgba(175, 139, 255, .07) calc(5.25% + 1.5px),
+      transparent calc(6.1% + 1.5px),
+      transparent calc(12% - 1.5px)),
+    repeating-linear-gradient(133deg,
+      transparent -1.5px,
+      rgba(159, 238, 216, .06) calc(1.15% - 1.5px),
+      rgba(210, 246, 205, .33) calc(2.68% - 1.5px),
+      rgba(248, 242, 196, .57) calc(2.97% - .7px),
+      rgba(255, 231, 190, .66) 3.3%,
+      rgba(255, 205, 218, .57) calc(3.72% + .7px),
+      rgba(255, 150, 234, .33) calc(4.28% + 1.5px),
+      rgba(255, 138, 222, .06) calc(5.45% + 1.5px),
+      transparent calc(6.3% + 1.5px),
+      transparent calc(12.5% - 1.5px));
+  background-size: 300% 100%, 195% 100%;
+  background-position: calc(50% + var(--sweep-phase)) center, calc(50% - var(--sweep-phase)) center;
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+.bird-card[data-rank="secret"] .window-foil {
+  z-index: 1;
+  opacity: calc(.13 + var(--flash) * .18);
+  background-image:
+    repeating-linear-gradient(116deg,
+      rgba(104, 236, 248, .22) 0%,
+      rgba(182, 136, 255, .24) 22%,
+      rgba(252, 150, 214, .22) 44%,
+      rgba(126, 246, 222, .22) 66%,
+      rgba(104, 236, 248, .22) 88%);
+  background-size: 280% 280%;
+  background-position: calc(var(--light-x) * 1.4) calc(var(--light-y) * 1.4);
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+.bird-card[data-rank="secret"] .foil,
+.bird-card[data-rank="secret"] .clearcoat,
+.bird-card[data-rank="secret"] .bird-ambient,
+.bird-card[data-rank="secret"] .bird-direct-scatter { z-index: 0; }
+
+.bird-card:not([data-has-matte]) .subject { display: none; }
+.bird-card:not([data-rank="common"]):not([data-has-matte]) .scene {
+  filter: saturate(.94) brightness(.92);
+}
+.bird-card:not([data-has-matte]) .bird-art::before { opacity: .62; }
+
+.bird-card[data-rank="ultra"] .bird-art::before {
+  opacity: .46;
+  background:
+    radial-gradient(ellipse at 76% 17%, rgba(255, 206, 102, .42), transparent 53%),
+    url("../assets/textures/card-rays-ultra.png") center / 100% 100% no-repeat,
+    var(--sky);
+}
+.bird-card[data-rank="secret"] .bird-art::before {
+  background: var(--sky);
+}
+
+@supports (background: repeating-conic-gradient(#fff, #000 12deg)) {
+  .bird-card[data-rank="ultra"] .bird-art::before {
+    background:
+      radial-gradient(ellipse at 76% 17%, rgba(255, 206, 102, .42), transparent 53%),
+      repeating-conic-gradient(from 14deg at 76% 17%, rgba(243, 190, 91, .15) 0deg, rgba(255, 225, 154, .26) 3deg,
+        transparent 8deg, transparent 14deg),
+      var(--sky);
+  }
+}

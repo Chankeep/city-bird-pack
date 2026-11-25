@@ -1,0 +1,297 @@
+.pack {
+  --seam: 9.6%;
+  --tear-angle: 0deg;
+  --tear-pull: 0px;
+  --tear-dir: 1;
+  position: relative;
+  width: 100%;
+}
+
+.pack::before {
+  display: block;
+  padding-top: 160%;
+  content: "";
+}
+
+.pack-shake,
+.pack-body,
+.pack-foil,
+.pack-foil-piece {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.pack-shake {
+  transform: translateX(var(--tear-pull)) rotate(var(--tear-angle)) scale(var(--tear-width, 1), var(--tear-height, 1));
+  transform-origin: 50% 76%;
+}
+
+.pack-body,
+.pack-foil-piece {
+  background-image: url("../assets/packs/pack-city.webp");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.pack-body {
+  z-index: 1;
+}
+
+.pack-foil {
+  z-index: 3;
+  pointer-events: none;
+  transform: translateY(var(--foil-lift, 0px)) rotate(var(--foil-turn, 0deg));
+  transform-origin: var(--foil-origin, 50% 10%);
+}
+
+.pack-foil-piece {
+  transform-origin: 0 0;
+}
+
+.pack-foil-piece::after {
+  position: absolute;
+  top: calc(var(--seam) - 9px);
+  right: 0;
+  left: 0;
+  height: 10px;
+  background: linear-gradient(175deg, transparent 5%, #fff8dc 83%, #b0b3ba);
+  opacity: var(--foil-glare, 0);
+  content: "";
+}
+
+.pack [hidden] {
+  display: none;
+}
+
+.pack-mouth {
+  position: absolute;
+  z-index: 0;
+  top: calc(var(--seam) - 6px);
+  right: 2.5%;
+  left: 2.5%;
+  height: 13px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(21, 28, 33, 0), #151c21 73%, #d8d1bb);
+  opacity: 0;
+}
+
+/* Intuitive gliding shimmer along the tear seam while sealed */
+.pack-seam-guide {
+  position: absolute;
+  z-index: 4;
+  top: calc(var(--seam) - 10px);
+  right: 2%;
+  left: 2%;
+  height: 20px;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 180ms ease;
+}
+
+.pack-seam-line {
+  position: absolute;
+  top: 50%;
+  right: 4%;
+  left: 4%;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 244, 210, .38) 18%,
+    rgba(255, 250, 232, .72) 50%,
+    rgba(255, 244, 210, .38) 82%,
+    transparent 100%);
+  opacity: .56;
+  animation: seam-pulse 2.6s ease-in-out infinite;
+}
+
+.pack-seam-glint {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 34%;
+  height: 12px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse closest-side,
+    rgba(255, 253, 235, .96) 0%,
+    rgba(255, 226, 152, .68) 45%,
+    transparent 100%);
+  transform: translate3d(-110%, 0, 0);
+  animation: seam-sweep 2.8s cubic-bezier(.42, .0, .24, 1) infinite;
+}
+
+.stage:not([data-phase="sealed"]) .pack-seam-guide,
+.pack.is-grabbed .pack-seam-guide,
+.pack.is-tearing .pack-seam-guide,
+.pack.is-released .pack-seam-guide {
+  opacity: 0;
+}
+
+.stage.reveal-offscreen .pack-seam-line,
+.stage.reveal-offscreen .pack-seam-glint {
+  animation-play-state: paused;
+}
+
+@keyframes seam-pulse {
+  0%, 100% { opacity: .28; }
+  50% { opacity: .72; }
+}
+
+@keyframes seam-sweep {
+  0% { transform: translate3d(-110%, 0, 0); opacity: 0; }
+  12% { opacity: .95; }
+  74% { opacity: .9; }
+  92%, 100% { transform: translate3d(320%, 0, 0); opacity: 0; }
+}
+
+.tear-effects {
+  --tear-tone: 255, 207, 115;
+  --tear-prism: 111, 237, 215;
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+}
+.stage[data-pack="garden"] .tear-effects { --tear-tone: 255, 169, 213; --tear-prism: 229, 177, 255; }
+.stage[data-pack="dusk"] .tear-effects { --tear-tone: 191, 219, 255; --tear-prism: 226, 162, 255; }
+.tear-trail, .tear-tip, .tear-spark { position: absolute; display: block; }
+.tear-trail {
+  top: calc(var(--seam) - 9px);
+  left: 0;
+  width: 100%;
+  height: 18px;
+  border-radius: 70%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(var(--tear-prism), .40) 26%,
+    rgba(var(--tear-tone), .82) 44%, #fff9df 49%, rgba(var(--tear-tone), .86) 53%,
+    rgba(var(--tear-tone), .30) 69%, transparent 100%);
+  transform: scaleX(var(--tear-amount, 0));
+  opacity: 0;
+}
+.tear-tip {
+  width: 44px;
+  height: 33px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse closest-side, #fffbea 0%, #fff3ce 21%,
+    rgba(var(--tear-tone), .89) 34%, rgba(var(--tear-prism), .50) 57%, transparent 100%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+.tear-ribbon {
+  position: absolute;
+  left: 50%;
+  bottom: 45%;
+  width: 30px;
+  height: 61px;
+  transform-origin: 50% 100%;
+  transform: translateX(-50%) rotate(-14deg);
+  background: linear-gradient(to top, #fff9dd, rgba(var(--tear-tone), .72) 18%,
+    rgba(var(--tear-prism), .35) 49%, transparent 100%);
+  clip-path: polygon(2% 0, 97% 6%, 56% 100%, 45% 100%);
+  opacity: .78;
+}
+.pack.is-tearing .tear-tip, .pack.is-tearing .tear-trail { opacity: var(--tear-live, 0); }
+.pack.is-released .tear-trail { animation: seal-light-out 315ms ease-out both; }
+.pack.is-released .tear-tip { animation: tear-flare 300ms ease-out both; }
+.tear-spark {
+  width: var(--spark-size);
+  height: var(--spark-size);
+  border-radius: 50%;
+  background: rgb(var(--spark-color));
+  box-shadow: 0 0 5px rgba(var(--spark-color), .82);
+  animation: tear-spark var(--spark-time) cubic-bezier(.16, .8, .36, 1) both;
+}
+.stage.reveal-offscreen .tear-spark { animation-play-state: paused; }
+
+@keyframes tear-spark {
+  0% { transform: translate3d(-50%, -50%, 0) scale(.45); opacity: .72; }
+  20% { opacity: 1; }
+  100% { transform: translate3d(var(--spark-dx), var(--spark-dy), 0) scale(.25); opacity: 0; }
+}
+@keyframes seal-light-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes tear-flare {
+  0% { transform: translate(-50%, -50%) scale(.9); opacity: 1; }
+  28% { transform: translate(-50%, -50%) scale(1.9); opacity: .92; }
+  100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+}
+
+.pack-handle {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 31%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  touch-action: pan-y;
+  cursor: grab;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pack-handle:focus {
+  outline: 2px solid #fff1c6;
+  outline-offset: -3px;
+}
+
+.pack-handle:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.pack-handle:disabled {
+  cursor: default;
+}
+
+.pack.is-grabbed .pack-handle {
+  cursor: grabbing;
+}
+
+.pack.is-released .pack-foil {
+  animation: fling-pack-foil 640ms cubic-bezier(.18, .63, .32, 1) both;
+}
+
+.pack.is-released .pack-shake {
+  animation: settle-pack 630ms cubic-bezier(.22, .7, .28, 1) both;
+}
+
+@keyframes fling-pack-foil {
+  0% {
+    opacity: 1;
+    transform: translateY(var(--foil-lift)) rotate(var(--foil-turn));
+  }
+  68% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(-155% * var(--tear-dir)), -55%, 0)
+      rotate(calc(52deg * var(--tear-dir))) rotateX(-24deg);
+  }
+}
+
+@keyframes settle-pack {
+  0% { transform: translateX(var(--tear-pull)) rotate(var(--tear-angle)) scale(var(--tear-width), var(--tear-height)); }
+  32% { transform: translate(calc(var(--tear-pull) * -.58), 13px) rotate(calc(var(--tear-angle) * -.84)) scale(.991, 1.018); }
+  100% { transform: translate(0, 27px) rotate(calc(var(--tear-angle) * -.5)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pack-shake,
+  .pack.is-released .pack-shake { animation: none; transform: none; }
+  .pack.is-released .pack-foil { animation: none; opacity: 0; }
+  .pack-seam-line, .pack-seam-glint { animation: none; }
+  .pack-seam-glint { display: none; }
+  .tear-ribbon, .tear-spark { display: none; }
+  .pack.is-released .tear-trail, .pack.is-released .tear-tip { animation: none; opacity: 0; }
+}

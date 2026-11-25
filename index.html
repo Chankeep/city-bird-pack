@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN" data-type="experience">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1614">
+  <title>城市飞鸟图鉴 · 撕卡包</title>
+  <link rel="stylesheet" href="./styles/styles.css">
+  <link rel="stylesheet" href="./styles/pack-motion.css">
+  <link rel="stylesheet" href="./styles/tear.css">
+  <link rel="stylesheet" href="./styles/reveal.css">
+  <link rel="stylesheet" href="./styles/card-finishes.css">
+  <link rel="stylesheet" href="./styles/card-details.css">
+  <link rel="stylesheet" href="./styles/collection.css">
+  <link rel="stylesheet" href="./styles/card-inspect.css">
+  <script src="./scripts/birds.js" defer></script>
+  <script src="./scripts/card-motion.js" defer></script>
+  <script src="./scripts/sound.js" defer></script>
+  <script src="./scripts/pack-motion.js" defer></script>
+  <script src="./scripts/tear.js" defer></script>
+  <script src="./scripts/reveal.js" defer></script>
+  <script src="./scripts/card-details.js" defer></script>
+  <script src="./scripts/card-artwork.js" defer></script>
+  <script src="./scripts/card-webgl.js" defer></script>
+  <script src="./scripts/bird-card.js" defer></script>
+  <script src="./scripts/collection.js" defer></script>
+  <script src="./scripts/card-inspect.js" defer></script>
+  <script src="./scripts/opening.js" defer></script>
+</head>
+<body data-pack="city">
+  <div class="ambient-backdrop" aria-hidden="true">
+    <span class="ambient-orb ambient-orb--a"></span>
+    <span class="ambient-orb ambient-orb--b"></span>
+    <span class="ambient-vignette"></span>
+  </div>
+  <main class="app-shell">
+    <header class="heading">
+      <div class="brand-group">
+        <h1>城市飞鸟图鉴</h1>
+        <p class="pack-tagline">屋顶街巷 · 青瓦暖阳间的城市羽影</p>
+      </div>
+      <button class="catalog-toggle" type="button" aria-controls="bird-catalog" aria-expanded="false" disabled>
+        <span class="catalog-toggle-dot" aria-hidden="true"></span>
+        <span class="catalog-toggle-label">图鉴 0/36</span>
+      </button>
+      <button class="sound-toggle" type="button" aria-pressed="true" aria-label="音效：开">
+        <svg class="sound-toggle-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <path class="sound-body" d="M4 9.5h3.6L12 5.8v12.4l-4.4-3.7H4z" fill="currentColor"/>
+          <path class="sound-wave sound-wave--1" d="M15.2 9.2a4 4 0 0 1 0 5.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path class="sound-wave sound-wave--2" d="M17.8 6.8a7.4 7.4 0 0 1 0 10.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path class="sound-slash" d="M15.4 9.4l5 5.2m0-5.2l-5 5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="pack-picker" role="group" aria-label="选择卡包">
+        <button data-pack="city" type="button" aria-pressed="true" disabled>屋顶街巷</button>
+        <button data-pack="garden" type="button" aria-pressed="false" disabled>城市花园</button>
+        <button data-pack="dusk" type="button" aria-pressed="false" disabled>暮色水岸</button>
+      </div>
+    </header>
+
+    <section class="stage" data-phase="sealed" data-pack="city" aria-label="撕卡包">
+      <div class="stage-decor" aria-hidden="true">
+        <span class="stage-corner stage-corner--tl"></span>
+        <span class="stage-corner stage-corner--tr"></span>
+        <span class="stage-corner stage-corner--bl"></span>
+        <span class="stage-corner stage-corner--br"></span>
+        <span class="stage-mote stage-mote--1"></span>
+        <span class="stage-mote stage-mote--2"></span>
+        <span class="stage-mote stage-mote--3"></span>
+        <span class="stage-mote stage-mote--4"></span>
+      </div>
+      <div class="stage-spotlight stage-spotlight--rare" aria-hidden="true"></div>
+      <div class="stage-spotlight stage-spotlight--holo" aria-hidden="true"></div>
+      <div class="stage-spotlight stage-spotlight--ultra" aria-hidden="true"></div>
+      <div class="stage-spotlight stage-spotlight--secret" aria-hidden="true"></div>
+
+      <div class="pack-position">
+        <div class="pack-pedestal" aria-hidden="true"></div>
+        <div class="pack">
+          <div class="pack-float" aria-hidden="true">
+            <div class="pack-tilt">
+              <div class="pack-shake">
+                <div class="pack-body"></div>
+                <div class="pack-foil"></div>
+                <span class="pack-mouth"></span>
+                <div class="pack-seam-guide">
+                  <span class="pack-seam-line"></span>
+                  <span class="pack-seam-glint"></span>
+                </div>
+                <div class="tear-effects">
+                  <span class="tear-trail"></span>
+                  <span class="tear-tip"><span class="tear-ribbon"></span></span>
+                  <div class="tear-sparks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="pack-handle" type="button" aria-label="向右撕开封口，也可以点按" disabled></button>
+        </div>
+      </div>
+
+      <div class="pack-light" aria-hidden="true"></div>
+      <div class="pack-results" role="group" aria-label="抽到的五张鸟卡"></div>
+
+      <div class="stage-actions">
+        <p class="stage-hint tear-hint">按住虚线封口，向右撕开</p>
+        <p class="stage-hint flip-hint">点按或横划翻开卡片</p>
+        <p class="stage-hint inspect-hint">点按任意卡片放大鉴赏</p>
+        <div class="stage-action-row">
+          <button class="action open-pack" type="button" disabled>撕开卡包</button>
+          <button class="action flip-all" type="button" hidden>全部翻开</button>
+          <button class="action reset-pack" type="button" hidden>再开一包</button>
+        </div>
+      </div>
+      <button class="vibration-toggle" type="button" aria-label="震动反馈" aria-pressed="false"
+        title="当前环境不支持震动" disabled>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"
+          fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+          <rect x="8" y="4" width="8" height="16" rx="2"/>
+          <path class="vibration-wave" d="M4.5 8a10 10 0 0 0 0 8M19.5 8a10 10 0 0 1 0 8"/>
+          <path class="vibration-slash" d="M4 4l16 16"/>
+        </svg>
+      </button>
+      <p class="visually-hidden" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="catalog" id="bird-catalog" aria-labelledby="catalog-title" hidden>
+      <div class="catalog-header">
+        <div>
+          <h2 id="catalog-title">观测收藏册</h2>
+          <p class="catalog-subtitle">收集 36 种城市飞鸟 · 每种含 5 档工艺特效</p>
+        </div>
+        <div class="catalog-progress-wrap">
+          <span class="catalog-progress-text" data-stat="percent">0%</span>
+          <div class="catalog-progress-track" aria-hidden="true">
+            <span class="catalog-progress-fill"></span>
+          </div>
+        </div>
+      </div>
+      <dl class="catalog-stats">
+        <div><dt>已收录</dt><dd data-stat="unique">0/36</dd></div>
+        <div><dt>特效变体</dt><dd data-stat="variants">0/180</dd></div>
+        <div><dt>已开包</dt><dd data-stat="packs">0</dd></div>
+      </dl>
+      <div class="catalog-filters" role="group" aria-label="按卡包查看收藏"></div>
+      <ul class="catalog-grid" aria-label="卡包收藏明细"></ul>
+      <p class="catalog-storage" hidden></p>
+    </section>
+
+    <section class="card-inspector" role="dialog" aria-modal="true" aria-label="卡片详情" hidden>
+      <div class="card-inspector-scrim" aria-hidden="true"></div>
+      <div class="card-inspector-stage">
+        <div class="card-inspector-focus"></div>
+        <div class="card-inspector-plaque">
+          <div class="card-inspector-meta">
+            <span class="inspector-pack"></span>
+            <span class="inspector-sep" aria-hidden="true">·</span>
+            <span class="inspector-rank"></span>
+            <span class="inspector-sep" aria-hidden="true">·</span>
+            <span class="inspector-copies"></span>
+          </div>
+          <div class="inspector-rank-bar" role="group" aria-label="切换已解锁工艺"></div>
+          <p class="card-inspector-tip">划动欣赏光效 · 已收录多档工艺可点按切换</p>
+        </div>
+      </div>
+      <button class="card-inspector-close" type="button" aria-label="关闭卡片详情">
+        <span aria-hidden="true">×</span>
+      </button>
+    </section>
+  </main>
+</body>
+</html>

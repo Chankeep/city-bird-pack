@@ -1,0 +1,113 @@
+.bird-details,
+.bird-details canvas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.bird-details canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Secret: live twinkling & slowly drifting cosmic starfield nebula behind the bird */
+.bird-secret-cosmos {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+
+.bird-detail-groove {
+  z-index: 4;
+  mix-blend-mode: var(--card-blend-multiply, multiply);
+  opacity: .86;
+}
+
+.bird-detail-foil {
+  z-index: 5;
+  opacity: .80;
+}
+
+.bird-detail-shine {
+  z-index: 6;
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+
+.bird-details--gold-edge .bird-detail-shine { mix-blend-mode: normal; }
+
+/* Rare: delicate amethyst-pearl satin sheen that blends naturally with the scene */
+.bird-details--laser .bird-detail-shine {
+  opacity: .34;
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+
+/* Holo rare: balanced full-bird holographic rainbow laser & diffraction sheen */
+.bird-details--holo .bird-detail-shine {
+  opacity: .44;
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+
+/* Secret: crisp, delicate rainbow plate embossing (preserves full bird clarity) */
+.bird-details--secret .bird-detail-groove {
+  opacity: .56;
+}
+.bird-details--secret .bird-detail-foil {
+  opacity: .62;
+}
+.bird-details--secret .bird-detail-shine {
+  opacity: .74;
+}
+
+/* Engraved copperplate platemark bevel around the art window on epic (ultra) cards */
+.bird-card[data-rank="ultra"] .bird-art::after,
+.bird-card[data-rank="secret"] .bird-art::after {
+  position: absolute;
+  z-index: 7;
+  top: 4px;
+  right: 4px;
+  bottom: 4px;
+  left: 4px;
+  border-radius: 5px;
+  pointer-events: none;
+  content: "";
+}
+
+.bird-card[data-rank="ultra"] .bird-art::after {
+  border: 1px solid rgba(255, 224, 146, .58);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 216, .72),
+    inset 0 -1px 0 rgba(92, 46, 12, .52),
+    0 1px 0 rgba(255, 238, 184, .44);
+}
+
+.bird-card[data-rank="secret"] .bird-art::after {
+  border: 1px solid rgba(255, 232, 174, .64);
+  box-shadow:
+    inset 0 1px 0 rgba(176, 252, 246, .76),
+    inset 0 -1px 0 rgba(206, 146, 255, .64),
+    0 1px 0 rgba(255, 240, 198, .48),
+    0 0 10px -2px rgba(174, 238, 252, .42);
+}
+
+@media (max-width: 480px) {
+  .bird-card[data-rank="ultra"] .bird-art::after,
+  .bird-card[data-rank="secret"] .bird-art::after {
+    top: 3px;
+    right: 3px;
+    bottom: 3px;
+    left: 3px;
+    border-radius: 3px;
+  }
+}

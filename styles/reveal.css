@@ -1,0 +1,1104 @@
+.pack-light {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pack-light[hidden], .pack-results[hidden] { display: none; }
+
+.reveal-origin { position: absolute; width: 0; height: 0; }
+
+.reveal-bloom, .reveal-slit, .reveal-halo, .reveal-ray, .reveal-spark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  opacity: 0;
+}
+
+.reveal-bloom {
+  width: var(--bloom-width);
+  height: var(--bloom-height);
+  transform: translate(-50%, -66%);
+  transform-origin: 50% 66%;
+  background: radial-gradient(ellipse closest-side,
+    rgba(255, 250, 216, .96) 0%, rgba(var(--burst-rgb), .58) 30%,
+    rgba(var(--burst-rgb), .24) 63%, transparent 100%);
+  animation: reveal-bloom 960ms ease-out both;
+}
+
+.reveal-slit {
+  width: var(--slit-width);
+  height: 14px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse closest-side,
+    #fffbe0 0%, rgba(var(--burst-rgb), .78) 46%, transparent 100%);
+  animation: reveal-slit 690ms ease-out both;
+}
+
+.reveal-halo {
+  width: var(--halo-width);
+  height: var(--halo-height);
+  border: 1px solid rgba(var(--burst-rgb), .70);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: reveal-halo 810ms 60ms ease-out both;
+}
+
+.reveal-ray {
+  width: var(--ray-width);
+  height: var(--ray-length);
+  margin-left: calc(var(--ray-width) * -.5);
+  margin-top: calc(var(--ray-length) * -1);
+  transform-origin: 50% 100%;
+  background: linear-gradient(to top, rgba(255, 254, 231, .92) 0%,
+    rgba(var(--ray-rgb), .58) 29%, rgba(var(--ray-rgb), .12) 72%, transparent 100%);
+  clip-path: polygon(0 0, 100% 0, 58% 100%, 42% 100%);
+  animation: reveal-ray 880ms var(--ray-delay) cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.reveal-spark {
+  width: var(--spark-size);
+  height: calc(var(--spark-size) * 2.6);
+  border-radius: 60% 60% 55% 55%;
+  background: rgb(var(--spark-rgb));
+  box-shadow: 0 0 5px rgba(var(--spark-rgb), .58);
+  animation: reveal-spark var(--spark-duration) var(--spark-delay) cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@keyframes reveal-bloom {
+  0% { transform: translate(-50%, -66%) scale(.1, .3); opacity: 0; }
+  20% { opacity: .94; }
+  55% { opacity: .48; }
+  100% { transform: translate(-50%, -66%) scale(1.38); opacity: 0; }
+}
+
+@keyframes reveal-slit {
+  0% { transform: translate(-50%, -50%) scale(.16, .22); opacity: 0; }
+  22% { transform: translate(-50%, -50%) scale(1, 1); opacity: .96; }
+  100% { transform: translate(-50%, -50%) scale(1.18, .2); opacity: 0; }
+}
+
+@keyframes reveal-halo {
+  0% { transform: translate(-50%, -50%) scale(.22); opacity: 0; }
+  20% { opacity: .64; }
+  100% { transform: translate(-50%, -50%) scale(2.18); opacity: 0; }
+}
+
+@keyframes reveal-ray {
+  0% { transform: rotate(var(--ray-angle)) scale(.18, .05); opacity: 0; }
+  27% { opacity: var(--ray-opacity); }
+  100% { transform: rotate(var(--ray-angle)) scale(1.08, 1.18); opacity: 0; }
+}
+
+@keyframes reveal-spark {
+  0% { transform: translate3d(0, 0, 0) rotate(var(--spark-angle)) scale(.25); opacity: 0; }
+  22% { opacity: .92; }
+  68% { opacity: .54; }
+  100% {
+    transform: translate3d(var(--spark-x), var(--spark-y), 0) rotate(var(--spark-angle)) scale(.18);
+    opacity: 0;
+  }
+}
+
+/* Five-card showcase: sweeping 5-card arch on desktop, staggered 3+2 pyramid on mobile */
+.pack-results {
+  position: absolute;
+  z-index: 7;
+  top: var(--results-center, 45%);
+  left: 50%;
+  width: calc(100% - 36px);
+  max-width: 920px;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-gap: 14px;
+  align-items: center;
+  pointer-events: none;
+  touch-action: none;
+}
+
+.stage[data-phase="dealt"] .pack-results,
+.stage[data-phase="revealed"] .pack-results {
+  pointer-events: auto;
+}
+
+.draw-slot,
+.draw-backfx-slot {
+  --fan-y: 0px;
+  --fan-rot: 0deg;
+  --fan-scale: 1;
+  grid-row: 1 / 2;
+  min-width: 0;
+  transform: translateY(var(--fan-y)) rotate(var(--fan-rot)) scale(var(--fan-scale));
+  transition: transform 340ms cubic-bezier(.22, .88, .3, 1);
+}
+
+.draw-slot { position: relative; z-index: var(--slot-z, 2); }
+
+/* The burst sits in the same grid cell, behind every card even when the active card is raised. */
+.draw-backfx-slot {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.draw-backfx-slot .draw-launch,
+.draw-backfx-slot .draw-float { height: 100%; }
+
+.draw-slot[data-slot="0"], .draw-backfx-slot[data-back-slot="0"] { grid-column: 1 / 2; --fan-y: 16px; --fan-rot: -3.6deg; --fan-scale: .94; --slot-z: 1; }
+.draw-slot[data-slot="1"], .draw-backfx-slot[data-back-slot="1"] { grid-column: 2 / 3; --fan-y: 4px; --fan-rot: -1.6deg; --fan-scale: .98; --slot-z: 2; }
+.draw-slot[data-slot="2"], .draw-backfx-slot[data-back-slot="2"] { grid-column: 3 / 4; --fan-y: -14px; --fan-rot: 0deg; --fan-scale: 1.07; --slot-z: 4; }
+.draw-slot[data-slot="3"], .draw-backfx-slot[data-back-slot="3"] { grid-column: 4 / 5; --fan-y: 4px; --fan-rot: 1.6deg; --fan-scale: .98; --slot-z: 2; }
+.draw-slot[data-slot="4"], .draw-backfx-slot[data-back-slot="4"] { grid-column: 5 / 6; --fan-y: 16px; --fan-rot: 3.6deg; --fan-scale: .94; --slot-z: 1; }
+
+.draw-slot.is-flipping {
+  z-index: 9 !important;
+}
+
+@media (hover: hover) {
+  .draw-slot:hover { z-index: var(--slot-hover-z, 6); }
+  .draw-slot:hover,
+  .draw-slot:hover + .draw-backfx-slot {
+    --float-play-state: paused;
+    transform: translateY(calc(var(--fan-y) - 6px)) rotate(0deg) scale(calc(var(--fan-scale) * 1.03));
+  }
+}
+
+.draw-launch {
+  display: block;
+  position: relative;
+  opacity: 0;
+  perspective: 960px;
+}
+
+.draw-float {
+  display: block;
+  position: relative;
+  perspective: 960px;
+}
+
+.pack-results.is-playing .draw-launch {
+  animation: draw-launch 680ms var(--launch-delay) both;
+}
+
+.pack-results.is-playing .draw-float { --float-animation: draw-float; }
+
+.pack-results.is-playing .draw-float {
+  animation: var(--float-animation) var(--float-duration) var(--float-delay)
+    ease-in-out infinite backwards var(--float-play-state, running);
+}
+
+.stage.reveal-offscreen,
+.stage[aria-hidden="true"] { --float-play-state: paused; }
+
+/* Smooth parabolic lift wrapper (separated from rotateY so flipping NEVER hitches!) */
+.card-flip-lift {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  perspective: 960px;
+}
+
+.draw-slot[data-rank="rare"] .card-flip-lift.is-lifting {
+  animation: lift-tier-rare 680ms both;
+}
+.draw-slot[data-rank="holo"] .card-flip-lift.is-lifting {
+  animation: lift-tier-holo 780ms both;
+}
+.draw-slot[data-rank="ultra"] .card-flip-lift.is-lifting {
+  animation: lift-tier-ultra 900ms both;
+}
+.draw-slot[data-rank="secret"] .card-flip-lift.is-lifting {
+  animation: lift-tier-secret 1080ms both;
+}
+
+@keyframes lift-tier-rare {
+  0% { transform: translate3d(0, 0, 0) scale(1); animation-timing-function: cubic-bezier(.20, .82, .34, 1); }
+  44% { transform: translate3d(0, -10px, 0) scale(1.07); animation-timing-function: cubic-bezier(.42, 0, .28, 1); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes lift-tier-holo {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotateZ(0deg); animation-timing-function: cubic-bezier(.18, .84, .32, 1); }
+  44% { transform: translate3d(0, -16px, 0) scale(1.12) rotateZ(-2.2deg); animation-timing-function: cubic-bezier(.40, 0, .26, 1); }
+  100% { transform: translate3d(0, 0, 0) scale(1) rotateZ(0deg); }
+}
+
+@keyframes lift-tier-ultra {
+  0% { transform: translate3d(0, 0, 0) scale(1); animation-timing-function: cubic-bezier(.16, .86, .30, 1); }
+  46% { transform: translate3d(0, -21px, 0) scale(1.16); animation-timing-function: cubic-bezier(.38, 0, .24, 1); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes lift-tier-secret {
+  0% { transform: translate3d(0, 0, 0) scale(1); animation-timing-function: cubic-bezier(.16, .88, .28, 1); }
+  48% { transform: translate3d(0, -25px, 0) scale(1.19); animation-timing-function: cubic-bezier(.38, 0, .22, 1); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* 3D Card Flipper: ONE unbroken continuous rotateY curve per tier (zero mid-air brakes!) */
+.card-flipper {
+  position: relative;
+  width: 100%;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+  transition: transform 620ms cubic-bezier(.20, 1.04, .32, 1);
+}
+
+.card-flipper.is-facedown {
+  transform: rotateY(180deg);
+}
+
+.draw-slot[data-rank="rare"] .card-flipper {
+  transition: transform 660ms cubic-bezier(.18, 1.04, .28, 1);
+}
+
+.draw-slot[data-rank="holo"] .card-flipper {
+  transition: transform 760ms cubic-bezier(.16, 1.04, .26, 1);
+}
+
+.draw-slot[data-rank="ultra"] .card-flipper {
+  transition: transform 880ms cubic-bezier(.15, 1.02, .24, 1);
+}
+
+/* Secret: ONE silky continuous 540-deg aerial spin with zero intermediate stops */
+.draw-slot[data-rank="secret"] .card-flipper.is-flipped:not(.is-settled) {
+  transition: none;
+  animation: flip-spin-secret 1060ms cubic-bezier(.16, .92, .24, 1) both;
+}
+
+@keyframes flip-spin-secret {
+  from { transform: rotateY(180deg); }
+  to { transform: rotateY(720deg); }
+}
+
+.card-flipper.is-settled {
+  animation: none !important;
+  transition: none;
+  transform: none;
+  -webkit-transform-style: flat;
+  transform-style: flat;
+}
+
+.card-flipper .bird-card {
+  position: relative;
+  z-index: 2;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.card-flipper.is-settled .bird-card {
+  -webkit-backface-visibility: visible;
+  backface-visibility: visible;
+}
+
+/* Smoothly bloom foil shimmer after the face rotates into view (prevents any light pop!) */
+.card-flipper.is-facedown .bird-ambient,
+.card-flipper.is-facedown .bird-direct-scatter {
+  opacity: 0 !important;
+}
+.card-flipper.is-flipped:not(.is-settled) .bird-ambient {
+  animation: reveal-card-ambient 420ms 180ms ease backwards;
+}
+
+@keyframes reveal-card-ambient {
+  from { opacity: 0; }
+  to { opacity: var(--ambient-opacity); }
+}
+
+.card-flipper.is-facedown .bird-card {
+  pointer-events: none;
+}
+
+.card-flipper.is-flipped .bird-card {
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+ * Bespoke Face-Down Card Back & 5-Tier Ambient Pre-Flip VFX
+ * ========================================================================== */
+.bird-card-back {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  transform: rotateY(180deg) translateZ(1px);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  touch-action: pan-y;
+}
+
+.card-flipper.is-flipped .bird-card-back {
+  pointer-events: none;
+}
+
+.card-flipper.is-settled .bird-card-back {
+  display: none;
+}
+
+/* Outer breathing aura halo */
+.card-back-aura {
+  position: absolute;
+  z-index: 0;
+  top: -10px;
+  right: -10px;
+  bottom: -10px;
+  left: -10px;
+  border-radius: 22px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(ellipse at center,
+    rgba(var(--back-glow-rgb, 240, 224, 180), .52) 0%,
+    rgba(var(--back-glow-rgb-2, 240, 224, 180), .24) 44%,
+    transparent 74%);
+}
+
+/* Rotating celestial rays behind ultra & secret face-down cards */
+.card-back-rays {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: 170%;
+  padding-top: 170%;
+  margin-left: -85%;
+  margin-top: -85%;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  display: none;
+}
+
+.draw-slot[data-rank="ultra"] .card-back-rays,
+.draw-slot[data-rank="secret"] .card-back-rays {
+  display: block;
+}
+
+.card-back-ray {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18%;
+  height: 50%;
+  margin-left: -9%;
+  margin-top: -50%;
+  transform-origin: 50% 100%;
+  clip-path: polygon(16% 0, 84% 0, 56% 100%, 44% 100%);
+}
+
+.draw-slot[data-rank="ultra"] .card-back-rays {
+  opacity: .56;
+  animation: back-rays-spin 16s linear infinite;
+}
+.draw-slot[data-rank="ultra"] .card-back-ray {
+  background: linear-gradient(to top, rgba(255, 228, 146, .62) 0%, rgba(244, 178, 78, .22) 55%, transparent 100%);
+}
+
+.draw-slot[data-rank="secret"] .card-back-rays {
+  opacity: .72;
+  animation: back-rays-spin 12s linear infinite;
+}
+.draw-slot[data-rank="secret"] .card-back-ray:nth-child(odd) {
+  background: linear-gradient(to top, rgba(212, 162, 255, .66) 0%, rgba(162, 122, 244, .24) 55%, transparent 100%);
+}
+.draw-slot[data-rank="secret"] .card-back-ray:nth-child(even) {
+  background: linear-gradient(to top, rgba(132, 246, 234, .62) 0%, rgba(248, 176, 228, .22) 55%, transparent 100%);
+}
+
+@keyframes back-rays-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Tier-specific outer aura halos */
+.draw-slot[data-rank="rare"] .card-back-aura {
+  --back-glow-rgb: 196, 138, 255;
+  --back-glow-rgb-2: 146, 108, 244;
+  opacity: .68;
+  animation: back-aura-pulse 2.3s ease-in-out infinite;
+}
+.draw-slot[data-rank="holo"] .card-back-aura {
+  --back-glow-rgb: 108, 246, 238;
+  --back-glow-rgb-2: 174, 148, 255;
+  opacity: .84;
+  animation: back-aura-pulse 1.9s ease-in-out infinite;
+}
+.draw-slot[data-rank="ultra"] .card-back-aura {
+  --back-glow-rgb: 255, 214, 108;
+  --back-glow-rgb-2: 238, 144, 58;
+  opacity: .96;
+  animation: back-aura-pulse 1.6s ease-in-out infinite;
+}
+.draw-slot[data-rank="secret"] .card-back-aura {
+  --back-glow-rgb: 230, 168, 255;
+  --back-glow-rgb-2: 112, 244, 236;
+  opacity: 1;
+  animation: back-aura-secret 2.4s ease-in-out infinite;
+}
+
+/* Ambient floating glints around face-down high-rarity cards */
+.card-back-fx {
+  position: absolute;
+  z-index: 3;
+  top: -12px;
+  right: -12px;
+  bottom: -12px;
+  left: -12px;
+  pointer-events: none;
+}
+
+.back-mote {
+  position: absolute;
+  display: block;
+  left: var(--mx, 50%);
+  top: var(--my, 50%);
+  width: var(--ms, 4px);
+  height: var(--ms, 4px);
+  border-radius: 50%;
+  background: rgb(var(--mc, 255, 242, 200));
+  box-shadow: 0 0 7px rgba(var(--mc, 255, 242, 200), .92);
+  opacity: 0;
+  animation: back-mote-twinkle var(--md, 2.2s) var(--mdl, 0s) ease-in-out infinite;
+}
+
+.back-mote--star {
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.back-mote--star::before,
+.back-mote--star::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  content: "";
+  background: rgb(var(--mc, 255, 248, 224));
+  box-shadow: 0 0 6px rgba(var(--mc, 255, 248, 224), .9);
+  border-radius: 999px;
+}
+.back-mote--star::before {
+  width: 100%;
+  height: 2px;
+  transform: translate(-50%, -50%);
+}
+.back-mote--star::after {
+  width: 2px;
+  height: 100%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes back-mote-twinkle {
+  0%, 100% { transform: translate3d(0, 4px, 0) scale(.35); opacity: 0; }
+  38% { opacity: .95; transform: translate3d(0, -3px, 0) scale(1.1); }
+  70% { opacity: .45; transform: translate3d(0, -9px, 0) scale(.85); }
+}
+
+.card-back-body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  border: 1px solid rgba(246, 223, 182, .34);
+  background:
+    radial-gradient(ellipse 84% 64% at 50% 40%, #2c473e 0%, #172823 58%, #0d1715 100%);
+  box-shadow:
+    0 14px 26px -12px rgba(0, 0, 0, .86),
+    inset 0 1px 0 rgba(255, 245, 222, .34),
+    inset 0 0 26px rgba(0, 0, 0, .44);
+}
+
+.stage[data-pack="garden"] .card-back-body {
+  border-color: rgba(252, 206, 220, .36);
+  background:
+    radial-gradient(ellipse 84% 64% at 50% 40%, #502b3f 0%, #2c1826 58%, #160c14 100%);
+}
+
+.stage[data-pack="dusk"] .card-back-body {
+  border-color: rgba(210, 212, 255, .36);
+  background:
+    radial-gradient(ellipse 84% 64% at 50% 40%, #303e6d 0%, #182241 58%, #0c1124 100%);
+}
+
+/* Tier-specific card-back cardstock & rim luster */
+.draw-slot[data-rank="rare"] .card-back-body {
+  border-color: rgba(204, 158, 255, .64);
+  box-shadow:
+    0 14px 28px -11px rgba(0, 0, 0, .86),
+    0 0 16px -3px rgba(192, 134, 255, .44),
+    inset 0 0 22px rgba(176, 118, 250, .18);
+}
+
+.draw-slot[data-rank="holo"] .card-back-body {
+  border-color: rgba(136, 246, 240, .74);
+  background:
+    radial-gradient(ellipse 84% 64% at 50% 38%, #21526a 0%, #1c2c58 58%, #101734 100%);
+  box-shadow:
+    0 14px 30px -10px rgba(0, 0, 0, .88),
+    0 0 22px -2px rgba(112, 242, 234, .54),
+    inset 0 0 24px rgba(124, 242, 236, .22);
+}
+
+.draw-slot[data-rank="ultra"] .card-back-body {
+  border-color: rgba(255, 226, 138, .88);
+  background:
+    radial-gradient(ellipse 84% 64% at 50% 38%, #6a461c 0%, #3b240d 56%, #1f1206 100%);
+  box-shadow:
+    0 14px 32px -10px rgba(0, 0, 0, .90),
+    0 0 26px 0 rgba(255, 206, 94, .64),
+    inset 0 1px 0 rgba(255, 244, 198, .66),
+    inset 0 0 28px rgba(255, 204, 96, .26);
+}
+
+.draw-slot[data-rank="secret"] .card-back-body {
+  border-color: rgba(238, 204, 255, .92);
+  background:
+    radial-gradient(ellipse 84% 64% at 50% 38%, #3c2662 0%, #1a1b3d 56%, #0c0d1f 100%);
+  box-shadow:
+    0 16px 34px -10px rgba(0, 0, 0, .92),
+    0 0 30px 1px rgba(214, 152, 255, .72),
+    inset 0 1px 0 rgba(246, 232, 255, .64),
+    inset 0 0 30px rgba(154, 238, 255, .26);
+}
+
+/* Engraved double hairline border + delicate corner diamonds inside card back */
+.card-back-frame {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  bottom: 7px;
+  left: 7px;
+  border-radius: 9px;
+  border: 1px solid rgba(248, 226, 186, .30);
+  box-shadow: inset 0 0 0 3px rgba(0, 0, 0, .14), inset 0 0 0 4px rgba(248, 226, 186, .14);
+  pointer-events: none;
+}
+
+.draw-slot[data-rank="ultra"] .card-back-frame {
+  border-color: rgba(255, 226, 146, .58);
+  box-shadow: inset 0 0 0 3px rgba(52, 28, 6, .26), inset 0 0 0 4px rgba(255, 214, 118, .28);
+}
+
+.draw-slot[data-rank="secret"] .card-back-frame {
+  border-color: rgba(224, 194, 255, .60);
+  box-shadow: inset 0 0 0 3px rgba(12, 10, 32, .30), inset 0 0 0 4px rgba(146, 242, 238, .26);
+}
+
+/* Minimalist gilded bird-compass emblem */
+.card-back-emblem {
+  position: relative;
+  width: 60%;
+  padding-top: 60%;
+  opacity: .90;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23f7e2bc' stroke-width='1.2' opacity='.85'%3E%3Ccircle cx='60' cy='60' r='48' stroke-dasharray='2 4'/%3E%3Ccircle cx='60' cy='60' r='39' opacity='.55'/%3E%3Cpath d='M60 6 L63 22 L60 18 L57 22 Z M60 114 L63 98 L60 102 L57 98 Z M6 60 L22 57 L18 60 L22 63 Z M114 60 L98 57 L102 60 L98 63 Z' fill='%23f7e2bc' stroke='none'/%3E%3C/g%3E%3Cpath d='M36 69 C45 62 50 51 58 43 C63 38 72 37 78 41 C75 45 73 48 76 51 C72 52 68 53 66 56 C71 61 77 65 86 67 C76 70 66 71 57 70 C50 75 43 79 34 80 C39 75 41 72 36 69 Z M47 55 C44 46 39 40 31 37 C38 38 46 42 52 48 Z' fill='%23fae8c7' opacity='.92'/%3E%3C/svg%3E");
+}
+
+.draw-slot[data-rank="ultra"] .card-back-emblem {
+  filter: drop-shadow(0 0 8px rgba(255, 214, 114, .65));
+}
+.draw-slot[data-rank="secret"] .card-back-emblem {
+  filter: drop-shadow(0 0 10px rgba(206, 168, 255, .75));
+}
+
+.card-back-sheen {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(116deg,
+    transparent 34%,
+    rgba(255, 248, 226, .08) 43%,
+    rgba(255, 250, 232, .26) 49%,
+    rgba(255, 248, 226, .08) 55%,
+    transparent 62%);
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  animation: back-sheen-glide 4.8s linear infinite;
+  pointer-events: none;
+}
+
+/* Style-matched diagonal sheens on higher-tier card backs */
+.draw-slot[data-rank="rare"] .card-back-sheen {
+  background: linear-gradient(114deg,
+    transparent 30%,
+    rgba(176, 118, 255, .14) 41%,
+    rgba(232, 186, 255, .36) 48%,
+    rgba(134, 236, 232, .22) 53%,
+    transparent 62%);
+  background-size: 250% 100%;
+  animation-duration: 3.6s;
+}
+
+.draw-slot[data-rank="holo"] .card-back-sheen {
+  background: linear-gradient(112deg,
+    transparent 24%,
+    rgba(96, 218, 255, .20) 36%,
+    rgba(154, 252, 232, .44) 45%,
+    rgba(214, 164, 255, .38) 53%,
+    rgba(255, 168, 216, .24) 60%,
+    transparent 68%);
+  background-size: 260% 100%;
+  animation-duration: 3.0s;
+}
+
+.draw-slot[data-rank="ultra"] .card-back-sheen {
+  background: linear-gradient(112deg,
+    transparent 26%,
+    rgba(244, 174, 72, .22) 38%,
+    rgba(255, 244, 194, .54) 47%,
+    rgba(255, 206, 108, .30) 54%,
+    transparent 64%);
+  background-size: 250% 100%;
+  animation-duration: 2.6s;
+}
+
+.draw-slot[data-rank="secret"] .card-back-sheen {
+  background: linear-gradient(112deg,
+    transparent 20%,
+    rgba(128, 244, 238, .26) 34%,
+    rgba(255, 246, 255, .52) 44%,
+    rgba(212, 146, 255, .44) 52%,
+    rgba(255, 218, 152, .32) 60%,
+    transparent 70%);
+  background-size: 260% 100%;
+  animation-duration: 2.2s;
+}
+
+.card-back-tag {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(8, 14, 14, .52);
+  border: 1px solid rgba(248, 226, 186, .26);
+  color: rgba(252, 238, 212, .88);
+  font-size: 10px;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+.draw-slot[data-rank="ultra"] .card-back-tag {
+  border-color: rgba(255, 222, 138, .54);
+  color: #fff0c2;
+}
+.draw-slot[data-rank="secret"] .card-back-tag {
+  border-color: rgba(226, 188, 255, .58);
+  color: #f8ecff;
+}
+
+.stage.reveal-offscreen .card-back-sheen,
+.stage.reveal-offscreen .card-back-aura,
+.stage.reveal-offscreen .card-back-rays,
+.stage.reveal-offscreen .back-mote {
+  animation-play-state: paused;
+}
+
+@keyframes back-aura-pulse {
+  0%, 100% { transform: scale(.97); opacity: .58; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+@keyframes back-aura-secret {
+  0%, 100% { transform: scale(.98); opacity: .78; filter: hue-rotate(0deg); }
+  50% { transform: scale(1.06); opacity: 1; filter: hue-rotate(28deg); }
+}
+
+@keyframes back-sheen-glide {
+  0%, 48% { background-position: 100% 50%; opacity: 0; }
+  58% { opacity: .94; }
+  80% { opacity: .76; }
+  90%, 100% { background-position: 0 50%; opacity: 0; }
+}
+
+/* ==========================================================================
+ * 5-Tier Signature Flip Burst VFX (Backplane behind card + Frontplane sparks)
+ * ========================================================================== */
+.card-flip-backfx,
+.card-flip-frontfx {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.card-flip-backfx { z-index: 1; }
+.card-flip-frontfx { z-index: 6; }
+
+.flip-flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--flash-w, 220px);
+  height: var(--flash-h, 270px);
+  border-radius: 50%;
+  background: radial-gradient(ellipse closest-side,
+    rgba(255, 250, 230, .74) 0%,
+    rgba(var(--flip-rgb, 255, 240, 198), .46) 44%,
+    transparent 100%);
+  transform: translate(-50%, -50%) scale(.28);
+  animation: flip-flash-out var(--flash-dur, 580ms) var(--flash-delay, 0ms) ease-out both;
+}
+
+.flip-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--ring-size, 155px);
+  height: var(--ring-size, 155px);
+  border-radius: 50%;
+  border: var(--ring-bw, 2px) solid rgba(var(--ring-rgb, 255, 240, 198), .82);
+  box-shadow: 0 0 18px rgba(var(--ring-rgb, 255, 240, 198), .48);
+  transform: translate(-50%, -50%) scale(.24);
+  animation: flip-ring-out var(--ring-dur, 640ms) var(--ring-delay, 0ms) cubic-bezier(.16, .9, .3, 1) both;
+}
+
+/* Rare: delicate translucent diagonal prism light slash */
+.flip-slash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(166, 118, 255, .44) 24%,
+    rgba(255, 248, 255, .78) 50%,
+    rgba(116, 238, 234, .48) 76%,
+    transparent 100%);
+  transform: translate(-50%, -50%) rotate(-32deg) scaleX(.1);
+  animation: flip-slash-out 520ms 110ms cubic-bezier(.16, .92, .28, 1) both;
+}
+
+/* Holo & Secret: radiant 4-point starburst cross behind the card */
+.flip-cross {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--cross-size, 230px);
+  height: var(--cross-size, 230px);
+  transform: translate(-50%, -50%) rotate(var(--cross-rot, 0deg)) scale(.2);
+  animation: flip-cross-out var(--cross-dur, 780ms) var(--cross-delay, 90ms) cubic-bezier(.16, .9, .28, 1) both;
+}
+
+.flip-cross::before,
+.flip-cross::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  content: "";
+  border-radius: 50%;
+  background: radial-gradient(ellipse closest-side,
+    rgba(255, 254, 244, .88) 0%,
+    rgba(var(--cross-rgb, 152, 246, 238), .62) 40%,
+    transparent 100%);
+}
+.flip-cross::before {
+  width: 100%;
+  height: 10px;
+  transform: translate(-50%, -50%);
+}
+.flip-cross::after {
+  width: 10px;
+  height: 100%;
+  transform: translate(-50%, -50%);
+}
+
+/* Ultra & Secret: radial burst rays radiating cleanly behind the card */
+.flip-ray {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--fr-w, 26px);
+  height: var(--fr-len, 170px);
+  margin-left: calc(var(--fr-w, 26px) * -.5);
+  margin-top: calc(var(--fr-len, 170px) * -1);
+  transform-origin: 50% 100%;
+  background: linear-gradient(to top,
+    rgba(255, 250, 224, .78) 0%,
+    rgba(var(--fr-rgb, 255, 214, 118), .52) 38%,
+    rgba(var(--fr-rgb, 255, 214, 118), .12) 76%,
+    transparent 100%);
+  clip-path: polygon(12% 0, 88% 0, 56% 100%, 44% 100%);
+  animation: flip-ray-out var(--fr-dur, 820ms) var(--fr-delay, 100ms) cubic-bezier(.16, .96, .28, 1) both;
+}
+
+/* Tier particles: laser glints, holo diamonds, golden foil flakes, cosmic stars */
+.flip-particle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--fp-size, 6px);
+  height: var(--fp-h, var(--fp-size, 6px));
+  border-radius: var(--fp-rad, 50%);
+  background: rgb(var(--fp-rgb, 255, 238, 184));
+  box-shadow: 0 0 8px rgba(var(--fp-rgb, 255, 238, 184), .84);
+  animation: flip-particle-out var(--fp-dur, 720ms) var(--fp-delay, 60ms) cubic-bezier(.14, .84, .28, 1) both;
+}
+
+.flip-particle--diamond {
+  border-radius: 1px;
+}
+
+.flip-particle--foil {
+  border-radius: 2px;
+  background: linear-gradient(135deg, #fff6cc 0%, rgb(var(--fp-rgb, 248, 188, 88)) 55%, #b86a24 100%);
+}
+
+@keyframes flip-flash-out {
+  0% { transform: translate(-50%, -50%) scale(.24); opacity: .96; }
+  34% { opacity: .82; }
+  100% { transform: translate(-50%, -50%) scale(1.48); opacity: 0; }
+}
+
+@keyframes flip-ring-out {
+  0% { transform: translate(-50%, -50%) scale(.22); opacity: .96; }
+  100% { transform: translate(-50%, -50%) scale(1.92); opacity: 0; }
+}
+
+@keyframes flip-slash-out {
+  0% { transform: translate(-50%, -50%) rotate(-32deg) scale(.12, .5); opacity: 0; }
+  24% { transform: translate(-50%, -50%) rotate(-32deg) scale(1.06, 1.15); opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(-32deg) scale(1.45, .18); opacity: 0; }
+}
+
+@keyframes flip-cross-out {
+  0% { transform: translate(-50%, -50%) rotate(var(--cross-rot, 0deg)) scale(.18); opacity: 0; }
+  26% { transform: translate(-50%, -50%) rotate(calc(var(--cross-rot, 0deg) + 12deg)) scale(1.08); opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(calc(var(--cross-rot, 0deg) + 28deg)) scale(1.42); opacity: 0; }
+}
+
+@keyframes flip-ray-out {
+  0% { transform: rotate(var(--fr-angle, 0deg)) scale(.2, .08); opacity: 0; }
+  26% { opacity: .92; }
+  100% { transform: rotate(var(--fr-angle, 0deg)) scale(1.12, 1.24); opacity: 0; }
+}
+
+@keyframes flip-particle-out {
+  0% {
+    transform: translate3d(-50%, -50%, 0) rotate(0deg) scale(.35);
+    opacity: 0;
+  }
+  18% { opacity: 1; }
+  74% { opacity: .82; }
+  100% {
+    transform: translate3d(var(--fp-x, 0px), var(--fp-y, 0px), 0) rotate(var(--fp-rot, 160deg)) scale(.2);
+    opacity: 0;
+  }
+}
+
+/* Ambient holographic shimmer on face-up cards */
+.bird-ambient, .bird-idle-light, .bird-idle-scatter,
+.bird-scatter-texture, .bird-direct-scatter {
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.bird-ambient {
+  --ambient-opacity: calc(1.22 - var(--flash) * 2.50);
+  z-index: 3;
+  opacity: var(--ambient-opacity);
+  mix-blend-mode: var(--card-blend-screen, screen);
+}
+
+.bird-card[data-rank="holo"] .bird-ambient {
+  --ambient-opacity: calc(1.97 - var(--flash) * 3.65);
+  mix-blend-mode: normal;
+}
+
+.bird-idle-light { opacity: .58; }
+
+.bird-idle-light::before {
+  position: absolute;
+  top: -30%;
+  right: -30%;
+  bottom: -30%;
+  left: -30%;
+  content: "";
+  background:
+    linear-gradient(112deg, transparent 32%, rgba(255,255,255,.07) 35%,
+      var(--hot, rgba(255,255,255,.72)) 44%, rgba(255,255,255,.20) 47%,
+      transparent 50%, transparent 51%, rgba(255,255,255,.52) 52%,
+      rgba(255,255,255,.13) 56%, transparent 58%),
+    radial-gradient(ellipse at 51% 46%, rgba(255,255,237,.16), transparent 44%);
+}
+
+.bird-card[data-rank="holo"] .bird-idle-light::before { opacity: .54; }
+
+/* Android keeps the flip in 3D, but moves the resting face as one plane. */
+.pack-results.is-playing[data-grid-optics="composited"] .draw-float {
+  --float-animation: draw-grid-planar-float;
+  perspective: none;
+}
+
+@keyframes draw-grid-planar-float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(var(--float-x), var(--float-up)) rotate(var(--float-roll)); }
+  56% { transform: translate(calc(var(--float-x) * -.65), 2px) rotate(calc(var(--float-roll) * -.8)); }
+  79% { transform: translate(calc(var(--float-x) * .3), calc(var(--float-up) * .6)) rotate(0deg); }
+}
+
+/* Move the reflection within the face paint instead of transforming a clipped child layer. */
+.pack-results.is-playing[data-grid-optics="composited"] .bird-idle-light::before,
+.pack-results.is-playing[data-grid-optics="composited"] .metal-reflection {
+  background-size: 115% 115%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+.pack-results.is-playing[data-grid-optics="composited"]:not(.has-flip-effects) .is-settled .bird-idle-light::before,
+.pack-results.is-playing[data-grid-optics="composited"]:not(.has-flip-effects) .is-settled .metal-reflection {
+  animation: draw-grid-float-light var(--float-duration) ease-in-out infinite var(--float-play-state, running);
+}
+
+@keyframes draw-grid-float-light {
+  0%, 100% { background-position: 50% 50%; }
+  25% { background-position: calc(50% + var(--float-light-x)) calc(50% + var(--float-light-y)); }
+  56% { background-position: calc(50% + var(--float-light-x) * -.8) calc(50% + var(--float-light-y) * -.5); }
+  79% { background-position: calc(50% + var(--float-light-x) * .3) 50%; }
+}
+
+.android-card-rendering .stage[aria-hidden="true"] .card-flip-backfx,
+.android-card-rendering .stage[aria-hidden="true"] .card-flip-frontfx,
+.android-card-rendering .stage[aria-hidden="true"] .stage-spotlight {
+  visibility: hidden;
+}
+
+.bird-idle-scatter {
+  -webkit-mask-image: radial-gradient(ellipse 53% 57% at 51% 46%, #000 8%, rgba(0,0,0,.65) 44%, transparent 95%);
+  mask-image: radial-gradient(ellipse 53% 57% at 51% 46%, #000 8%, rgba(0,0,0,.65) 44%, transparent 95%);
+}
+
+.bird-scatter-texture, .bird-direct-scatter {
+  background: url("../assets/textures/holo-scatter.png") center / 100% 100% no-repeat;
+}
+
+.bird-direct-scatter {
+  z-index: 3;
+  opacity: calc((var(--flash) - var(--rest-flash, .30)) * 3.20);
+  -webkit-mask-image: radial-gradient(ellipse 53% 57% at var(--sx, 51%) var(--sy, 46%), #000 8%, rgba(0,0,0,.65) 44%, transparent 95%);
+  mask-image: radial-gradient(ellipse 53% 57% at var(--sx, 51%) var(--sy, 46%), #000 8%, rgba(0,0,0,.65) 44%, transparent 95%);
+}
+
+@keyframes draw-launch {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--launch-x), var(--launch-y), 0) rotateZ(var(--launch-roll)) rotateX(28deg) scale(.42);
+    animation-timing-function: cubic-bezier(.16, 1, .3, 1);
+  }
+  18% {
+    opacity: 1;
+    transform: translate3d(var(--launch-x), var(--pop-y), 0) rotateX(12deg) scale(.72);
+    animation-timing-function: cubic-bezier(.2, .8, .26, 1);
+  }
+  52% {
+    opacity: 1;
+    transform: translate3d(var(--hop-x), var(--hop-y), 0) rotateZ(var(--hop-roll)) rotateX(-9deg) scale(1.04);
+    animation-timing-function: cubic-bezier(.25, .7, .17, 1);
+  }
+  77% { opacity: 1; transform: translate3d(0, 4px, 0) rotateX(4deg) scale(.99); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes draw-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+  25% {
+    transform: translate3d(var(--float-x), var(--float-up), 0)
+      rotateX(var(--float-tilt)) rotateY(var(--float-turn)) rotateZ(var(--float-roll));
+  }
+  56% {
+    transform: translate3d(calc(var(--float-x) * -.65), 2px, 0)
+      rotateX(calc(var(--float-tilt) * -.5)) rotateY(calc(var(--float-turn) * -.8)) rotateZ(calc(var(--float-roll) * -.8));
+  }
+  79% { transform: translate3d(calc(var(--float-x) * .3), calc(var(--float-up) * .6), 0) rotateY(calc(var(--float-turn) * .3)); }
+}
+
+
+@media (max-width: 760px) {
+  .pack-results {
+    top: 41%;
+    width: calc(100% - 26px);
+    max-width: 480px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-gap: 12px 10px;
+  }
+  .draw-slot { --slot-hover-z: var(--slot-z, 2); }
+  .draw-slot[data-slot="0"], .draw-backfx-slot[data-back-slot="0"] { grid-column: 1 / 3; --fan-y: 6px; --fan-rot: -2.4deg; --fan-scale: .97; --slot-z: 2; }
+  .draw-slot[data-slot="2"], .draw-backfx-slot[data-back-slot="2"] { grid-column: 3 / 5; --fan-y: -8px; --fan-rot: 0deg; --fan-scale: 1.06; --slot-z: 4; }
+  .draw-slot[data-slot="4"], .draw-backfx-slot[data-back-slot="4"] { grid-column: 5 / 7; --fan-y: 6px; --fan-rot: 2.4deg; --fan-scale: .97; --slot-z: 2; }
+  .draw-slot[data-slot="1"], .draw-backfx-slot[data-back-slot="1"] { grid-column: 2 / 4; grid-row: 2 / 3; --fan-y: 2px; --fan-rot: -1.4deg; --fan-scale: .98; --slot-z: 3; }
+  .draw-slot[data-slot="3"], .draw-backfx-slot[data-back-slot="3"] { grid-column: 4 / 6; grid-row: 2 / 3; --fan-y: 2px; --fan-rot: 1.4deg; --fan-scale: .98; --slot-z: 3; }
+}
+
+@media (max-width: 560px) {
+  .pack-results {
+    top: 41%;
+    width: calc(100% - 20px);
+    grid-gap: 10px 8px;
+  }
+  .bird-card-back { border-radius: 9px; }
+  .card-back-frame { top: 5px; right: 5px; bottom: 5px; left: 5px; border-radius: 6px; }
+  .card-back-tag { font-size: 8.5px; padding: 1px 6px; bottom: 9%; }
+  .flip-slash { width: 190px; }
+}
+
+@media (max-width: 360px) {
+  .pack-results { width: calc(100% - 14px); grid-gap: 8px 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pack-results.is-playing[data-grid-optics="composited"] .draw-float,
+  .pack-results.is-playing[data-grid-optics="composited"]:not(.has-flip-effects) .is-settled .bird-idle-light::before,
+  .pack-results.is-playing[data-grid-optics="composited"]:not(.has-flip-effects) .is-settled .metal-reflection { animation: none; }
+  .pack-light .reveal-slit, .pack-light .reveal-halo, .pack-light .reveal-ray, .pack-light .reveal-spark { display: none; }
+  .pack-light .reveal-bloom { animation: reveal-quiet 270ms ease-out both; }
+  .pack-results.is-playing .draw-float,
+  .card-back-sheen, .card-back-aura, .card-back-rays, .back-mote { animation: none; }
+  .pack-results.is-playing .draw-launch { opacity: 1; animation: none; }
+  .card-flipper,
+  .card-flip-lift.is-lifting,
+  .draw-slot[data-rank] .card-flipper.is-flipped:not(.is-settled) { transition: none; animation: none; }
+  .card-flip-backfx, .card-flip-frontfx { display: none; }
+  @keyframes reveal-quiet {
+    0%, 100% { opacity: 0; }
+    30% { opacity: .34; }
+  }
+}
